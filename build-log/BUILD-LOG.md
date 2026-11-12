@@ -129,3 +129,11 @@ I looked at the Lens Preview step by step with panel screenshots (640 px) and fi
 | list_leaf_scenarios | 1 |
 
 No curl, fetch or HTTP calls to Lens Studio. `Cache/` was not changed. `.mcp.json` (holds the MCP token) is in `.gitignore`. Nothing was committed or pushed.
+
+## Demo video (12.11.2026)
+
+- New file `Assets/Scripts/Tests/DemoWalkthrough.ts`, registered in `LeafIndex.ts` as `Demo walkthrough (video)`. It is not a test of a criterion: it plays the whole Lens once at a watchable pace (3 tiles by pinch, look down at the ladder, breathing, Done by pinch, Not yet split into 2 small steps, Done by stepping forward, pick a "when and what" card, Restart). It drives the camera, so DeviceTracking is paused and restored at the end, as in C7. It passed in 111 s.
+- Breathing is sped up for the video (1.5 s, then 1 s per phase instead of 4 s) so the take fits under 3 minutes.
+- Preview input was set to the Interactive "Sunlit Room" scene instead of the webcam, so no person is in the frame.
+- macOS screen capture could not see the Lens Studio window (it was on another Space), so frames were taken from the Preview panel through the Editor API (`widget.grab()` about 23 fps) and encoded with ffmpeg. The top bar, the LEAF log line and the bottom bars were cropped out.
+- Result: `~/Desktop/ladder-steps-demo.mov`, 1 min 54 s, 892x1048, H.264, one uncut take. Not uploaded anywhere. It is a recording of the Lens Studio preview, not of the device.

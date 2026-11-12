@@ -10,6 +10,7 @@ import {C6Cards} from "./C6Cards"
 import {C7Arrow} from "./C7Arrow"
 import {C8Storage} from "./C8Storage"
 import {IKReach} from "./IKReach"
+import {DemoWalkthrough} from "./DemoWalkthrough"
 
 @component
 export class LeafIndex extends BaseScriptComponent {
@@ -23,6 +24,7 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "C6 goal cards", typename: C6Cards.getTypeName()},
     {id: "C7 return arrow", typename: C7Arrow.getTypeName()},
     {id: "C8 persistent storage", typename: C8Storage.getTypeName()},
-    {id: "IK reach tiles and Done", typename: IKReach.getTypeName()}
+    {id: "IK reach tiles and Done", typename: IKReach.getTypeName()},
+    {id: "Demo walkthrough (video)", typename: DemoWalkthrough.getTypeName()}
   ]
 }

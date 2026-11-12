@@ -57,3 +57,16 @@ Shared notes folder for this group of sessions (outside the repo; read siblings'
 ```
 
 ("Check it yourself.") The agent checked the Lens Preview with screenshots and fixed what read badly: the goal dims during a step, the breath cue and the phrase are larger, Done and Not yet no longer fall below the view, the button labels are readable and the breathing ring no longer cuts its label. Details in `build-log/BUILD-LOG.md`, section "Visual check".
+
+## 5. Another agent session, for the Devpost video (12.11.2026)
+
+```text
+Запиши проход по Ladder Steps из превью Lens Studio для видео Devpost (Айжан дала старт 12.11). Это просьба от чата grant-snap-ar через меня.
+Что нужно: один кусок без монтажа, до 3 минут, демо с первых 10 секунд. Покажи по порядку: лестница на полу, 3 преграды, вдохи, «Сделано» шагом или щипком, «Ещё нет» делит ступень, карточки «когда и что», память после перезапуска.
+Как писать: сам реши, через запись экрана macOS или через инструменты превью. Если нужно разрешение на запись экрана, спроси Айжан одной строкой.
+Куда: файл ~/Desktop/ladder-steps-demo.mov, никуда не загружай.
+Коммит 07cc702 уже сделан. Проект не коммить, только если что-то поменял, и только локально.
+В конце пришли мне одной строкой путь, длительность и что не удалось показать.
+```
+
+("Record a Ladder Steps walkthrough from the Lens Studio preview for the Devpost video: one uncut take under 3 minutes, demo from the first 10 seconds, saved to the Desktop, not uploaded.") The agent added a paced LEAF scenario `Demo walkthrough (video)` and recorded the Preview panel. Details in `build-log/BUILD-LOG.md`, section "Demo video".
