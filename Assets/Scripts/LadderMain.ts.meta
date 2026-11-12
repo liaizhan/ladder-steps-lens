@@ -1,0 +1,79 @@
+- !<AssetImportMetadata/77eb36f2-55ba-4889-8b45-1a5297e89873>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> a333faf5-36ea-4fba-b577-d23a3d8d580b
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> a333faf5-36ea-4fba-b577-d23a3d8d580b
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 03463f79-e336-432d-b2d2-12d74ffda499
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/03463f79-e336-432d-b2d2-12d74ffda499>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 1db35577-7e92-47ad-a8f3-a08cc635a2d8
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    breathPhaseSeconds: false
+    breathRounds: false
+    camera: false
+    clearSavedOnStart: false
+    floorBelowEyes: false
+    goalDimWhileClimbing: false
+    material: false
+    phraseGazeDown: false
+    showRestartButton: false
+    ui: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - material: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      ui: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      camera: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      breathPhaseSeconds: !<float> 4.000000
+      breathRounds: !<float> 3.000000
+      floorBelowEyes: !<float> 150.000000
+      phraseGazeDown: !<float> 18.000000
+      goalDimWhileClimbing: 0.300000
+      clearSavedOnStart: false
+      showRestartButton: true
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"Ladder Steps: main flow (pick, climb, breathe, goal cards, saved progress)"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Wiring"}'
+    - '// @input Asset.Material material {"hint":"Unlit material, cloned per object for its color"}'
+    - '// @input AssignableType_1 ui {"hint":"LadderUI component (tiles, Done / Not yet, cards, Restart)"}'
+    - '// @input SceneObject camera {"hint":"The scene Camera object (used for billboarding, the return arrow and stepping forward)"}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input float breathPhaseSeconds = 4 {"hint":"Seconds per breathing phase (in, hold, out, hold). 4 = brief default"}'
+    - '// @input float breathRounds = 3 {"hint":"Breathing rounds per step"}'
+    - '// @input float floorBelowEyes = 150 {"hint":"STAND-IN: floor height below the camera start, in cm (no real floor in the preview)"}'
+    - '// @input float phraseGazeDown = 12 {"hint":"Gaze angle in degrees below eye level for the current phrase, breathing ring and Done / Not yet. The step stays on the floor; a thin line joins it to its phrase. 12 = in view with a level head (the return arrow shows past 14). Design fix approved by Aizhan, 12.11.2026", "widget":"slider", "min":5, "max":45, "step":1}'
+    - "// @input float goalDimWhileClimbing = 0.3 {\"hint\":\"How bright the goal stays while a step is being worked (1 = full glow). The phrase, ring and Done / Not yet stand in front of the goal on the same line of sight (the view is only about 37 x 32 degrees), so the goal dims while a step is active and glows fully again for the cards. Design fix from Aizhan's visual check, 12.11.2026\", \"widget\":\"slider\", \"min\":0.1, \"max\":1, \"step\":0.05}"
+    - '// @input bool clearSavedOnStart {"hint":"Clear saved progress on start (off = reopen where the user stopped)"}'
+    - '// @input bool showRestartButton = true {"hint":"Show the preview-only Restart (demo) button"}'
+    - '// @ui {"widget":"group_end"}'

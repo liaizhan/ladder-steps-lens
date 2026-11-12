@@ -1,0 +1,59 @@
+- !<AssetImportMetadata/a1fcc69b-e4af-49ce-a65d-f586c2c19d14>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> a4055a52-85f0-4c2d-b342-806f278b2ba6
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> a4055a52-85f0-4c2d-b342-806f278b2ba6
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> acd58fde-6dd2-4230-930a-196af99fca31
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/acd58fde-6dd2-4230-930a-196af99fca31>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 60df3f11-3d24-4101-841c-b53a51ca11a2
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    cardSize: false
+    choiceSize: false
+    gap: false
+    tileSize: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - tileSize: !<Vec2> {x: 30.000000, y: 15.000000}
+      choiceSize: !<Vec2> {x: 12.000000, y: 6.000000}
+      cardSize: !<Vec2> {x: 25.000000, y: 12.000000}
+      gap: !<float> 3.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"Ladder Steps UI: tiles, Done / Not yet, cards, Restart"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input vec2 tileSize = {30,15} {"hint":"Phrase tile size in cm (width, height)"}'
+    - '// @input vec2 choiceSize = {12,6} {"hint":"Done / Not yet button size in cm"}'
+    - '// @input vec2 cardSize = {25,12} {"hint":"Goal card size in cm"}'
+    - '// @input float gap = 3 {"hint":"Gap between tiles and cards in cm"}'
+    - '// @ui {"widget":"group_end"}'
