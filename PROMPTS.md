@@ -18,7 +18,7 @@ Background (from the session that started this one):
 Aizhan is entering the Devpost "Learn AR with SPECS" round 2, submission planned 04.12.2026 (deadline 07.12). The Lens "Ladder Steps" comes from her Ladder method; she is "author of the Ladder method", never "psychologist". Project: Lens Studio 5.23.2, SPECS Base Template, CLAD plugin installed at project level, lens-studio MCP configured in `.mcp.json`. The plan-lens interview is finished and `devpost/design-brief.md` is approved: ladder on the floor from "Me" to a glowing goal, 6 author phrases (pick 3) become steps, box breathing 4-4-4-4 three times, Done by step or pinch makes the phrase crumble, Not yet splits the step, three "today" cards at the goal, return arrow, progress in persistent storage. Judges value a small UI, only the next step visible, big rare buttons, LEAF tests per done criterion, and a build log plus PROMPTS.md in the repo. She does not know Lens Studio and wants the agent to do everything.
 
 Task:
-Work in the project root `/Users/aizhanli/Documents/ladder-steps-lens` (Lens Studio has this project open). Read `devpost/design-brief.md` and build it for SPECS. Follow the brief closely. Get the basic flow working first, then add detail. Write and run LEAF tests for each done criterion (there are 8), and tell me which pass.
+Work in the project root (Lens Studio has this project open). Read `devpost/design-brief.md` and build it for SPECS. Follow the brief closely. Get the basic flow working first, then add detail. Write and run LEAF tests for each done criterion (there are 8), and tell me which pass.
 
 How to work:
 - Use CLAD (ls-clad plugin skills and agents) and the Lens Studio MCP tools only. Never curl/fetch/HTTP to Lens Studio (see `AGENTS.md`). Never modify `Cache/`. Do not put the MCP token from `.mcp.json` into git.
@@ -31,7 +31,7 @@ How to work:
 
 Done when: the Lens runs in Lens Studio preview, LEAF scenarios exist for all 8 criteria with a pass/fail report, `build-log/` and `PROMPTS.md` are filled.
 
-Shared notes folder for this group of sessions (outside the repo; read siblings' notes there, leave hand-over notes or large findings there instead of pasting them into messages): /Users/aizhanli/Library/Application Support/Claude/side-session-notes/local_accdf89b-a62d-413e-9109-2f69ab99c4ac
+Shared notes folder for this group of sessions (outside the repo; read siblings' notes there, leave hand-over notes or large findings there instead of pasting them into messages): [local notes folder, path removed]
 ```
 
 ## 2. Aizhan, during the build (11.11.2026, about 20:28 UTC)
