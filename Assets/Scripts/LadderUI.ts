@@ -1,5 +1,5 @@
 // Ladder Steps UI module: every pinchable control is a UIKit Button laid out with GridLayout.
-// Panels: phrase tiles (2 x 3), Done / Not yet row, goal cards (3 in a row), preview Restart button.
+// Panels: phrase tiles (2 x 3), Done / Not yet row, goal cards (stacked), preview Restart button.
 // LadderMain owns the flow and calls into this module.
 
 import {Button} from "SpectaclesUIKit.lspkg/Scripts/Components/Button/Button"
@@ -43,6 +43,17 @@ export function applyTextRole(t: Text, role: TextRole, distanceCm = 110): void {
 
 export const LIGHT_TEXT = new vec4(0.97, 0.95, 0.9, 1)
 
+// Text size for anything the user must read, matched to the step phrase (Headline1 x 1.6, about 1 degree tall).
+// v1 video: tile and card labels in Body at 100 cm were about 0.46 degrees and unreadable (13.11.2026).
+export const READ_BOOST = 1.6
+export function readSize(distanceCm: number): number {
+  return roleSize("Headline1", distanceCm) * READ_BOOST
+}
+// Secondary text (headers, the note, hints): smaller than the phrase but above 0.6 degrees.
+export function secondarySize(distanceCm: number): number {
+  return roleSize("Headline2", distanceCm) * 1.3
+}
+
 // Plain light text on an object. width/height in cm. wrap=true for multi-line phrases.
 export function makeText(
   parent: SceneObject,
@@ -84,13 +95,13 @@ export class LadderUI extends BaseScriptComponent {
   @ui.group_start("Settings")
   @input
   @hint("Phrase tile size in cm (width, height)")
-  tileSize: vec2 = new vec2(30, 15)
+  tileSize: vec2 = new vec2(25, 12)
   @input
   @hint("Done / Not yet button size in cm")
   choiceSize: vec2 = new vec2(12, 6)
   @input
   @hint("Goal card size in cm")
-  cardSize: vec2 = new vec2(25, 12)
+  cardSize: vec2 = new vec2(46, 9)
   @input
   @hint("Gap between tiles and cards in cm")
   gap: number = 3
@@ -109,7 +120,8 @@ export class LadderUI extends BaseScriptComponent {
     role: TextRole,
     toggle: boolean,
     onPress: () => void,
-    labelDistanceCm = 100
+    labelDistanceCm = 100,
+    labelSize = 0
   ): {btn: Button; item: GridItem; label: Text} {
     const so = global.scene.createSceneObject(name)
     so.setParent(parent)
@@ -123,6 +135,7 @@ export class LadderUI extends BaseScriptComponent {
     t.depthTest = true
     t.text = label
     applyTextRole(t, role, labelDistanceCm)
+    if (labelSize > 0) t.size = labelSize
     t.horizontalAlignment = HorizontalAlignment.Center
     t.verticalAlignment = VerticalAlignment.Center
     t.horizontalOverflow = HorizontalOverflow.Wrap
@@ -180,19 +193,20 @@ export class LadderUI extends BaseScriptComponent {
     this.tileButtons = []
     for (let i = 0; i < phrases.length; i++) {
       const idx = i
-      const b = this.makeButton(gridHost, "Tile" + (i + 1), phrases[i], this.tileSize, "Body", true, () => onPick(idx))
+      const b = this.makeButton(gridHost, "Tile" + (i + 1), phrases[i], this.tileSize, "Headline1", true, () => onPick(idx), 100, readSize(100))
       this.tileButtons.push(b.btn)
       items.push(b.item)
     }
     this.makeGrid(gridHost, 2, 3, this.tileSize, this.gap, items)
     const gridH = 3 * this.tileSize.y + 2 * this.gap
     const w = 2 * this.tileSize.x + this.gap
-    makeText(panel.content, "TilesHeader", header, "Headline2", 100, w, 6, true).sceneObject
-      .getTransform()
-      .setLocalPosition(new vec3(0, gridH / 2 + 5, 0))
-    makeText(panel.content, "TilesNote", note, "Caption", 70, w, 8, true, new vec4(0.85, 0.85, 0.8, 1)).sceneObject
-      .getTransform()
-      .setLocalPosition(new vec3(0, -gridH / 2 - 5.5, 0))
+    const head = makeText(panel.content, "TilesHeader", header, "Headline2", 100, w, 4, true)
+    head.size = secondarySize(100)
+    head.sceneObject.getTransform().setLocalPosition(new vec3(0, gridH / 2 + 4, 0))
+    // The note is three lines of small print: Body weight, still above 0.6 degrees at 100 cm.
+    const nt = makeText(panel.content, "TilesNote", note, "Body", 100, w, 6, true, new vec4(0.85, 0.85, 0.8, 1))
+    nt.size = roleSize("Body", 100) * 1.35
+    nt.sceneObject.getTransform().setLocalPosition(new vec3(0, -gridH / 2 - 5, 0))
     return panel.root
   }
 
@@ -233,26 +247,27 @@ export class LadderUI extends BaseScriptComponent {
   }
 
   // ---------- Goal cards ----------
+  // Cards stack in one column: three in a row were 81 cm wide at 100 cm, wider than the Specs view (13.11.2026).
   buildCards(worldPos: vec3, question: string, cards: string[], onPick: (i: number) => void): SceneObject {
     const panel = this.makePanel("GoalCards", null, worldPos)
-    const w = cards.length * this.cardSize.x + (cards.length - 1) * this.gap
-    makeText(panel.content, "Question", question, "Headline2", 100, w, 6, true).sceneObject
-      .getTransform()
-      .setLocalPosition(new vec3(0, this.cardSize.y / 2 + 6, 0))
+    const gridH = cards.length * this.cardSize.y + (cards.length - 1) * this.gap
+    const q = makeText(panel.content, "Question", question, "Headline2", 100, this.cardSize.x + 6, 6, true)
+    q.size = readSize(100) * 0.92
+    q.sceneObject.getTransform().setLocalPosition(new vec3(0, gridH / 2 + 5.5, 0))
     const gridHost = child(panel.content, "CardGrid", vec3.zero())
     const items: GridItem[] = []
     this.cardButtons = []
     for (let i = 0; i < cards.length; i++) {
       const idx = i
-      const b = this.makeButton(gridHost, "Card" + (i + 1), cards[i], this.cardSize, "Body", true, () => onPick(idx))
+      const b = this.makeButton(gridHost, "Card" + (i + 1), cards[i], this.cardSize, "Headline1", true, () => onPick(idx), 100, readSize(100) * 0.85)
       this.cardButtons.push(b.btn)
       items.push(b.item)
     }
-    this.makeGrid(gridHost, cards.length, 1, this.cardSize, this.gap, items)
+    this.makeGrid(gridHost, 1, cards.length, this.cardSize, this.gap, items)
     return panel.root
   }
 
-  // Keep card `keep` (lit), fade the other two out, then slide the kept card to the center.
+  // Keep card `keep` (lit), fade the other two out. LadderMain then slides the kept card to the middle.
   keepCard(keep: number, instant: boolean): void {
     for (let i = 0; i < this.cardButtons.length; i++) {
       const b = this.cardButtons[i]
@@ -304,11 +319,10 @@ export class LadderUI extends BaseScriptComponent {
   // ---------- Preview-only Restart ----------
   buildRestart(worldPos: vec3, onRestart: () => void): SceneObject {
     const panel = this.makePanel("RestartDemo", null, worldPos)
-    const b = this.makeButton(panel.content, "RestartButton", "Restart (demo)", new vec2(14, 5), "Caption", false, onRestart)
+    const b = this.makeButton(panel.content, "RestartButton", "Restart (demo)", new vec2(18, 6), "Headline1", false, onRestart, 105)
     b.label.textFill.color = new vec4(1, 0.85, 0.55, 1)
-    makeText(panel.content, "RestartHint", "preview only, keeps saved progress", "Caption", 45, 18, 3, true, new vec4(0.8, 0.8, 0.75, 1)).sceneObject
-      .getTransform()
-      .setLocalPosition(new vec3(0, -4.5, 0))
+    const hint = makeText(panel.content, "RestartHint", "preview only, keeps saved progress", "Headline2", 115, 24, 4, true, new vec4(0.8, 0.8, 0.75, 1))
+    hint.sceneObject.getTransform().setLocalPosition(new vec3(0, -6.5, 0))
     return panel.root
   }
 }

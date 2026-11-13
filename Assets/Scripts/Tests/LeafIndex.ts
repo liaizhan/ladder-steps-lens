@@ -1,4 +1,4 @@
-// LEAF scenario index for Ladder Steps: one scenario per done criterion plus an IK reach check.
+// LEAF scenario index for Ladder Steps: one scenario per done criterion plus IK reach and UI text size checks.
 import {scenariosIndex} from "Leaf.lspkg/Scenarios/decorator/ScenarioIndexDecorator"
 import {ScenarioMetadata} from "Leaf.lspkg/Scenarios/scenario/ScenarioMetadata"
 import {C1Geometry} from "./C1Geometry"
@@ -11,6 +11,7 @@ import {C7Arrow} from "./C7Arrow"
 import {C8Storage} from "./C8Storage"
 import {IKReach} from "./IKReach"
 import {DemoWalkthrough} from "./DemoWalkthrough"
+import {UITextSize} from "./UITextSize"
 
 @component
 export class LeafIndex extends BaseScriptComponent {
@@ -25,6 +26,7 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "C7 return arrow", typename: C7Arrow.getTypeName()},
     {id: "C8 persistent storage", typename: C8Storage.getTypeName()},
     {id: "IK reach tiles and Done", typename: IKReach.getTypeName()},
+    {id: "UI text size", typename: UITextSize.getTypeName()},
     {id: "Demo walkthrough (video)", typename: DemoWalkthrough.getTypeName()}
   ]
 }

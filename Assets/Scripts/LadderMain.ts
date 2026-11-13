@@ -6,7 +6,7 @@
 // On glasses the real version would place the ladder on the floor found by WorldQueryModule.
 
 import animate from "SpectaclesInteractionKit.lspkg/Utils/animate"
-import {LadderUI, makeText, roleSize, LIGHT_TEXT} from "./LadderUI"
+import {LadderUI, makeText, roleSize, readSize, LIGHT_TEXT} from "./LadderUI"
 import {
   CARDS,
   LadderData,
@@ -45,6 +45,12 @@ const RING_MIN = 0.72
 const RING_MAX = 1.12
 // Done / Not yet labels read a little smaller than the phrase (x1.6), so the phrase stays the main thing.
 const CHOICE_LABEL_BOOST = 1.3
+// Return arrow: distance in front of the eyes (cm), its offset from the gaze center and the clear zone (degrees).
+const ARROW_DIST = 60
+const ARROW_RADIUS_DEG = 10
+const ARROW_CLEAR_DEG = 15
+// "Me" and "Your goal" labels: role distance = real distance x this, so they read about 0.75 degrees tall.
+const LABEL_DIST_BOOST = 1.2
 const COL_HALO = new vec4(1, 0.85, 0.5, 0.7)
 const COL_GOAL_LABEL = new vec4(1, 0.92, 0.7, 1)
 
@@ -421,8 +427,10 @@ export class LadderMain extends BaseScriptComponent {
     this.data = d ? d : freshData()
     this.makeArrow()
     if (this.showRestartButton) {
-      this.restartRoot = this.ui.buildRestart(this.o(34, -22, -95), () => this.restart())
-      this.restartRoot.getTransform().setWorldRotation(this.faceOriginRot(this.o(34, -22, -95)))
+      // Preview-only button: right of the tiles (they end at x = 26.5 cm), just outside the display when
+      // looking straight ahead, and high enough to clear the desk of the Preview room (13.11.2026).
+      this.restartRoot = this.ui.buildRestart(this.o(38, -12, -95), () => this.restart())
+      this.restartRoot.getTransform().setWorldRotation(this.faceOriginRot(this.o(38, -12, -95)))
     }
     this.built = true
     this.boot(d !== null)
@@ -503,7 +511,9 @@ export class LadderMain extends BaseScriptComponent {
 
   // ================= phrase tiles =================
   private showTiles(): void {
-    const pos = this.o(0, -12, -100)
+    // Header, 2 x 3 tiles and note together span about 56 cm (from -29 to +27 cm around the panel
+    // center), so the panel center sits at eye level and the block stays inside the display (13.11.2026).
+    const pos = this.o(0, 0, -100)
     this.tilesRoot = this.ui.buildTiles(
       pos,
       PHRASES,
@@ -548,9 +558,11 @@ export class LadderMain extends BaseScriptComponent {
       ghost.getTransform().setWorldRotation(this.faceOriginRot(froms[k]))
       const q = global.scene.createSceneObject("GhostQuad")
       q.setParent(ghost)
-      q.getTransform().setLocalScale(new vec3(30, 15, 1))
+      const ts = this.ui.tileSize
+      q.getTransform().setLocalScale(new vec3(ts.x, ts.y, 1))
       this.meshOn(q, this.planeM, new vec4(0.6, 0.85, 1, 0.35))
-      const t = makeText(ghost, "GhostText", PHRASES[this.data.chosen[k]], "Body", 100, 28, 13, true)
+      const t = makeText(ghost, "GhostText", PHRASES[this.data.chosen[k]], "Headline1", 100, ts.x - 1.5, ts.y - 1, true)
+      t.size = readSize(100)
       t.sceneObject.getTransform().setLocalPosition(new vec3(0, 0, 0.3))
       ghosts.push(ghost)
     }
@@ -630,8 +642,11 @@ export class LadderMain extends BaseScriptComponent {
     this.ladderRoot = root
     // "Me"
     const me = this.makeStep(root, "Step_Me", 0, 1, 1, COL_ME)
-    const meLabel = makeText(root, "MeLabel", "Me", "Headline1", 120, 30, 8, false)
-    meLabel.sceneObject.getTransform().setWorldPosition(this.stepPos(0).add(new vec3(0, 9, 0)))
+    // Labels are sized for their distance from where the user stands, about 0.75 degrees tall
+    // (MeLabel was 0.5 degrees at 120, 13.11.2026).
+    const mePos = this.stepPos(0).add(new vec3(0, 9, 0))
+    const meLabel = makeText(root, "MeLabel", "Me", "Headline1", mePos.distance(this.origin) * LABEL_DIST_BOOST, 30, 8, false)
+    meLabel.sceneObject.getTransform().setWorldPosition(mePos)
     this.billboards.push(meLabel.sceneObject)
     void me
     for (let i = 0; i < this.data.steps.length; i++) {
@@ -654,8 +669,9 @@ export class LadderMain extends BaseScriptComponent {
     halo.getTransform().setLocalScale(new vec3(2.6, 2.6, 2.6))
     this.haloMat = this.meshOn(halo, this.ringM, COL_HALO)
     this.billboards.push(halo)
-    const gl = makeText(root, "GoalLabel", "Your goal", "Headline1", 220, 40, 8, false, COL_GOAL_LABEL)
-    gl.sceneObject.getTransform().setWorldPosition(this.goalPos().add(new vec3(0, 24, 0)))
+    const glPos = this.goalPos().add(new vec3(0, 24, 0))
+    const gl = makeText(root, "GoalLabel", "Your goal", "Headline1", Math.max(220, glPos.distance(this.origin) * LABEL_DIST_BOOST), 60, 10, false, COL_GOAL_LABEL)
+    gl.sceneObject.getTransform().setWorldPosition(glPos)
     this.goalLabel = gl
     this.billboards.push(gl.sceneObject)
     this.colorSteps()
@@ -941,17 +957,22 @@ export class LadderMain extends BaseScriptComponent {
     const target = this.goalPos().add(new vec3(0, -26, 28))
     const from = root.getTransform().getWorldPosition()
     const fromScale = root.getTransform().getLocalScale().x
-    const cardFromX = cardSo ? cardSo.getTransform().getLocalPosition().x : 0
+    // The kept card is about twice as far as when it was picked, so it grows with the distance and keeps
+    // about 80% of its angular size; a fixed 1.25 left its text at 0.54 deg (UI text size test, 13.11.2026).
+    const eye = this.camT ? this.camT.getWorldPosition() : this.origin
+    const toScale = fromScale * 0.8 * eye.distance(target) / Math.max(1, eye.distance(from))
+    // cards are stacked, so the kept card slides vertically to the middle
+    const cardFromY = cardSo ? cardSo.getTransform().getLocalPosition().y : 0
     const apply = (t: number) => {
       if (isNull(root)) return
       const p = vec3.lerp(from, target, t)
       root.getTransform().setWorldPosition(p)
-      const s = lerp(fromScale, 1.25, t)
+      const s = lerp(fromScale, toScale, t)
       root.getTransform().setLocalScale(new vec3(s, s, s))
       root.getTransform().setWorldRotation(this.faceCameraRot(p))
       if (cardSo && !isNull(cardSo)) {
         const lp = cardSo.getTransform().getLocalPosition()
-        cardSo.getTransform().setLocalPosition(new vec3(lerp(cardFromX, 0, t), lp.y, lp.z))
+        cardSo.getTransform().setLocalPosition(new vec3(lp.x, lerp(cardFromY, 0, t), lp.z))
       }
     }
     if (instant) {
@@ -975,8 +996,10 @@ export class LadderMain extends BaseScriptComponent {
   // ================= banner ("You stopped at: ...") =================
   private showBanner(text: string): void {
     this.destroyObj(this.banner)
-    const pos = this.o(0, -4, -100)
-    const t = makeText(global.scene.getRootObject(0), "StoppedAtBanner", text, "Headline2", 100, 60, 10, true, new vec4(1, 0.92, 0.7, 1))
+    // Same size as the step phrase, above the phrase and the breathing ring (v1 video: too small, 13.11.2026).
+    const pos = this.o(0, 6, -100)
+    const t = makeText(global.scene.getRootObject(0), "StoppedAtBanner", text, "Headline1", 100, 52, 10, true, new vec4(1, 0.92, 0.7, 1))
+    t.size = readSize(100) * 0.95
     const so = t.sceneObject
     so.setParent(null)
     so.getTransform().setWorldPosition(pos)
@@ -1006,42 +1029,94 @@ export class LadderMain extends BaseScriptComponent {
     if (!this.camT) return
     const a = global.scene.createSceneObject("ReturnArrow")
     a.setParent(this.camT.getSceneObject())
-    a.getTransform().setLocalPosition(new vec3(0, 0, -60))
+    a.getTransform().setLocalPosition(new vec3(0, 0, -ARROW_DIST))
     a.getTransform().setLocalScale(new vec3(0.9, 0.9, 0.9))
     this.meshOn(a, this.arrowM, COL_ARROW)
     a.enabled = false
     this.arrowObj = a
   }
 
-  private arrowTarget(): vec3 | null {
+  // Root of what the arrow points back to in the current phase.
+  private arrowRoot(): SceneObject | null {
     const p = this.data.phase
-    if (p === "pick") return this.tilesRoot && !isNull(this.tilesRoot) ? this.tilesRoot.getTransform().getWorldPosition() : null
-    if (p === "climb") return this.focus && !isNull(this.focus) ? this.focus.getTransform().getWorldPosition() : null
-    if (p === "cards") return this.cardsRoot && !isNull(this.cardsRoot) ? this.cardsRoot.getTransform().getWorldPosition() : null
-    return null
+    let r: SceneObject | null = null
+    if (p === "pick") r = this.tilesRoot
+    if (p === "climb") r = this.focus
+    if (p === "cards") r = this.cardsRoot
+    return r && !isNull(r) ? r : null
   }
 
+  // Angular box (degrees, camera space: x right, y up) around every visible mesh and text under root.
+  // A corner behind the eyes counts as 90 degrees off to its side.
+  private angularBox(root: SceneObject): {x0: number; x1: number; y0: number; y1: number} | null {
+    if (!this.camT) return null
+    const inv = this.camT.getInvertedWorldTransform()
+    const box = {x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9}
+    let any = false
+    const R = 180 / Math.PI
+    const addCorner = (w: vec3) => {
+      const l = inv.multiplyPoint(w)
+      const fwd = -l.z
+      let ax: number
+      let ay: number
+      if (fwd < 1) {
+        ax = l.x >= 0 ? 90 : -90
+        ay = l.y >= 0 ? 90 : -90
+      } else {
+        ax = Math.atan2(l.x, fwd) * R
+        ay = Math.atan2(l.y, fwd) * R
+      }
+      box.x0 = Math.min(box.x0, ax)
+      box.x1 = Math.max(box.x1, ax)
+      box.y0 = Math.min(box.y0, ay)
+      box.y1 = Math.max(box.y1, ay)
+      any = true
+    }
+    const visit = (so: SceneObject) => {
+      // the thin tether down to the step is a guide line, not content to read
+      if (!so.enabled || so.name === "StepTether") return
+      const vis = (so.getComponents("Component.Text") as BaseMeshVisual[]).concat(
+        so.getComponents("Component.RenderMeshVisual") as BaseMeshVisual[]
+      )
+      for (const v of vis) {
+        if (!v.enabled) continue
+        const a = v.worldAabbMin()
+        const b = v.worldAabbMax()
+        if (b.x - a.x > 1000 || b.x < a.x) continue
+        addCorner(new vec3(a.x, a.y, a.z))
+        addCorner(new vec3(b.x, a.y, a.z))
+        addCorner(new vec3(a.x, b.y, a.z))
+        addCorner(new vec3(b.x, b.y, a.z))
+        addCorner(new vec3(a.x, a.y, b.z))
+        addCorner(new vec3(b.x, a.y, b.z))
+        addCorner(new vec3(a.x, b.y, b.z))
+        addCorner(new vec3(b.x, b.y, b.z))
+      }
+      for (let i = 0; i < so.getChildrenCount(); i++) visit(so.getChild(i))
+    }
+    visit(root)
+    return any ? box : null
+  }
+
+  // The arrow shows only when nothing of the target is within ARROW_CLEAR_DEG of the gaze center,
+  // and it sits ARROW_RADIUS_DEG off center, so it can never cover the phrase, tiles or cards
+  // (v1 video: the arrow sat on top of the phrase while looking down at the ladder, 13.11.2026).
   private tickArrow(): void {
     if (!this.arrowObj || !this.camT) return
-    const target = this.arrowTarget()
+    const root = this.arrowRoot()
     let show = false
-    if (target) {
-      const local = this.camT.getInvertedWorldTransform().multiplyPoint(target)
-      const lateral = Math.sqrt(local.x * local.x + local.y * local.y)
-      const angle = Math.atan2(lateral, -local.z) * (180 / Math.PI)
-      if (angle > 14) {
+    const box = root ? this.angularBox(root) : null
+    if (box) {
+      // nearest point of the box to the gaze center (0, 0)
+      const nx = Math.max(box.x0, Math.min(0, box.x1))
+      const ny = Math.max(box.y0, Math.min(0, box.y1))
+      const near = Math.sqrt(nx * nx + ny * ny)
+      if (near > ARROW_CLEAR_DEG) {
         show = true
-        let dx = local.x
-        let dy = local.y
-        const len = Math.sqrt(dx * dx + dy * dy)
-        if (len < 0.001) {
-          dx = 0
-          dy = -1
-        } else {
-          dx /= len
-          dy /= len
-        }
-        this.arrowObj.getTransform().setLocalPosition(new vec3(dx * 11, dy * 11, -60))
+        const dx = nx / near
+        const dy = ny / near
+        const r = ARROW_DIST * Math.tan((ARROW_RADIUS_DEG * Math.PI) / 180)
+        this.arrowObj.getTransform().setLocalPosition(new vec3(dx * r, dy * r, -ARROW_DIST))
         this.arrowObj.getTransform().setLocalRotation(quat.angleAxis(Math.atan2(dy, dx), vec3.forward()))
       }
     }

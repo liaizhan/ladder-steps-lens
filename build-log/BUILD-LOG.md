@@ -137,3 +137,33 @@ No curl, fetch or HTTP calls to Lens Studio. `Cache/` was not changed. `.mcp.jso
 - Preview input was set to the Interactive "Sunlit Room" scene instead of the webcam, so no person is in the frame.
 - macOS screen capture could not see the Lens Studio window (it was on another Space), so frames were taken from the Preview panel through the Editor API (`widget.grab()` about 23 fps) and encoded with ffmpeg. The top bar, the LEAF log line and the bottom bars were cropped out.
 - Result: `~/Desktop/ladder-steps-demo.mov`, 1 min 54 s, 892x1048, H.264, one uncut take. Not uploaded anywhere. It is a recording of the Lens Studio preview, not of the device.
+
+## Readable text and demo v2 (13.11 to 14.11.2026)
+
+After the v1 video the tile and card labels were about 0.46 degrees tall and hard to read. This pass made every text readable and recorded the demo again.
+
+**Text size.** Tile labels, goal cards, the goal question and the "You stopped at" / "Your step for today" banner now use one reading size from `LadderUI.readSize` (Headline1 for the distance, x1.6). Tiles are 25x12 cm, cards 46x9 cm, so the larger labels stay inside their plates.
+
+**Field of view.** In the Preview the Specs display shows about 29 cm to each side at 1 m. The old six tiles, the question and the banner were wider than that and were cut at the edges. Now the tile panel sits at eye level 1 m ahead, the question is 52 cm wide, the banner 52 cm wide. The preview Restart button moved to (38, -12, -95), out of the way of the tiles.
+
+**Return arrow.** The arrow pointed back at the step but could cover the phrase. It now shows only when nothing of the target is within 15 degrees of the center of the view, and it sits 10 degrees off center at 60 cm, so it never overlaps the phrase.
+
+**Kept card.** After a card is picked it flies to the goal, about twice as far away, and kept a fixed scale of 1.25, so its text dropped to 0.54 degrees. It now grows with the distance and keeps about 80% of its angular size (0.71 degrees at the goal).
+
+**New test `UI text size`** (`Assets/Scripts/Tests/UITextSize.ts`). On every screen (pick, breathing, choices, "You stopped at", cards, kept card, "Your step for today") each visible Lens text must be at least 0.55 degrees tall from a level head at the start, and a button label must stay inside its plate. It found the kept card problem above; the Lens was fixed, not the test. Measured sizes are 0.61 to 1.13 degrees.
+
+**All 10 scenarios pass:** C1 ladder geometry, C2 pick three tiles, C3 breathing rounds, C4 Done crumbles, C5 Not yet splits, C6 goal cards, C7 return arrow, C8 persistent storage, IK reach tiles and Done, UI text size.
+
+**Demo v2** (`DemoWalkthrough.ts`, `~/Desktop/ladder-steps-demo-v2.mov`, 2 min 41 s, 1920x1080, H.264, no sound, one uncut take):
+
+- tiles on screen from the first second, three picked by pinch before 10 s;
+- the ladder appears on the floor: look down at Me, then a slow 6 s pan to the goal;
+- the first step plays one full breathing round at the real pace (4 s per phase); later breathing is sped up (1.2 s, then 1 s per phase) so the take stays under 3 minutes;
+- Done by pinch (the phrase crumbles), Not yet (the step splits into 2 small steps), turning away so the return arrow shows, turning back;
+- preview Restart in the middle of the climb: the Lens opens on the same step with "You stopped at: ..." (held about 8 s);
+- Done by stepping forward, the goal question and three "when and what" cards, one card picked, the camera steps back while the card flies to the goal;
+- Restart at the end: "Your step for today: ...".
+
+Pauses are left on purpose for narration. Frames were taken from the Preview panel with `widget.grab()` every 40 ms through `ExecuteEditorCode`, cropped to 892x1060 (top bar, LEAF log line and bottom bars removed), scaled to 1080 high and centered on a dark 1920x1080 frame with ffmpeg, using each frame's real timestamp. Five takes in all. Take 1 had about 4 s of empty frame after the card pick (the card flew off screen). Take 2 looked at the goal from too close and the goal filled the frame, so the camera now steps back to the start while the kept card flies. Take 3 had grab stalls when Lens Studio was slow (a 3.9 s frozen frame in the real pace breathing). Take 4 was clean but 2:34, so pauses for narration were added. Take 5 is the file: one gap over 250 ms in 3857 frames (253 ms). The v1 file was not changed. It is a recording of the Lens Studio preview, not of the device. Not uploaded anywhere.
+
+**MCP calls in this pass:** about 55 (ExecuteEditorCode 19, run_leaf_scenario 17, RecompileTypeScriptTool 7, CapturePanelScreenshotTool 5, RunAndCollectLogsTool 2, open_leaf_panel 2, list_leaf_scenarios 2, scene-graphql 1). No curl, fetch or HTTP calls to Lens Studio. `Cache/` and `.mcp.json` were not changed. Committed locally, nothing pushed.
