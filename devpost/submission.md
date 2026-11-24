@@ -89,6 +89,6 @@ Ladder Steps is a self-reflection exercise from the Ladder method. It is not the
 
 **Built with:** Lens Studio, CLAD, Lens Studio MCP, LEAF, Spectacles Interaction Kit, Spectacles UI Kit, Claude Code, Devpost Learn skill pack (plan-lens)
 
-**Video:** [YouTube link]
+**Video:** https://youtu.be/CyNAvZhWhtY
 
 **Repository:** https://github.com/liaizhan/ladder-steps-lens

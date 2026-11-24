@@ -14,7 +14,7 @@ Built for [Learn AR with SPECS](https://learn-specs.devpost.com/) on Devpost Lea
 
 ## See it in 30 seconds
 
-- **Video:** [YouTube link, added before submission]. One uncut take of the Lens Studio preview, driven by the `Demo walkthrough (video)` LEAF scenario.
+- **Video:** [Watch on YouTube](https://youtu.be/CyNAvZhWhtY). One uncut take of the Lens Studio preview, driven by the `Demo walkthrough (video)` LEAF scenario.
 - **In Lens Studio:** open `ladder-steps-lens.esproj`, choose the Spectacles device and Interactive Preview, and click three phrase tiles. A click is a pinch.
 - **The moment to judge:** the ladder lying on your floor, your goal glowing at eye level at the far end, and one phrase at a time between you and it.
 
