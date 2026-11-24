@@ -45,11 +45,12 @@ People, most of them women, who know what they want but feel stuck between where
 
 ## Run it
 
-1. Install [Lens Studio](https://ar.snap.com/download) 5.23.2 or later.
-2. Open `ladder-steps-lens.esproj`.
-3. In the Preview panel choose the Spectacles device and Interactive mode. A click is a pinch; W, A, S, D move you, right drag looks around.
-4. The preview has no real floor, so the ladder stands at a fixed height, 150 cm below the eyes. Change it in the Inspector: object `LadderSteps`, component `LadderMain`, `floorBelowEyes`.
-5. The preview-only **Restart** button reopens the Lens and shows the "You stopped at" moment. Turn on `clearSavedOnStart` to begin from the tiles again.
+1. Install [Lens Studio](https://ar.snap.com/download) 5.23.2 or later and [Git LFS](https://git-lfs.com/).
+2. Clone the repository, then run `git lfs install` and `git lfs pull`. Six binary files (the packages in `Packages/` and `Assets/Render/Echopark.hdr`) are stored in Git LFS. Without this step they are small text pointers and Lens Studio cannot open the project. Browsing the code and this README does not need it.
+3. Open `ladder-steps-lens.esproj`.
+4. In the Preview panel choose the Spectacles device and Interactive mode. A click is a pinch; W, A, S, D move you, right drag looks around.
+5. The preview has no real floor, so the ladder stands at a fixed height, 150 cm below the eyes. Change it in the Inspector: object `LadderSteps`, component `LadderMain`, `floorBelowEyes`.
+6. The preview-only **Restart** button reopens the Lens and shows the "You stopped at" moment. Turn on `clearSavedOnStart` to begin from the tiles again.
 
 Other settings on the same component: `breathPhaseSeconds` (4), `breathRounds` (3), `phraseGazeDown` (12 degrees), `goalDimWhileClimbing` (0.3), `showRestartButton` (on).
 
