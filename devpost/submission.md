@@ -1,10 +1,17 @@
 # Devpost submission draft: Ladder Steps
 
-Draft, 12.11.2026. Not submitted. Links in [brackets] are filled in before Submit.
+Draft, 13.11.2026. Not submitted. Links in [brackets] are filled in before Submit.
 
 **Project name:** Ladder Steps
 
 **Tagline:** Stand at the bottom of your own ladder, breathe through the words that hold you back, and walk to your goal across your floor.
+
+## For the judges, in one minute
+
+- **Design:** one spatial moment. You stand at the bottom of your own ladder and see your goal glowing at the far end. Only one phrase shows at a time, inside the 37 by 32 degree view. See What it does and Why AR.
+- **Technical implementation:** planned with plan-lens, built by Claude Code with CLAD and the Lens Studio MCP (145 calls), 9 LEAF scenarios for 8 done criteria plus an IK reach check, all passing in the preview. See How I built it.
+- **Innovation:** the obstacles on the ladder are the phrases you once believed, taken from the Ladder method, and you get past each one with your breath, not with a score. See Why the obstacles are phrases.
+- **Presentation:** an uncut take of the Lens Studio preview, the Lens on screen from the first seconds. The repository README says what is real and what is simulated.
 
 ## Who it's for
 
@@ -61,6 +68,8 @@ Claude Code built the Lens in Lens Studio 5.23.2 with CLAD and the Lens Studio M
 
 Every prompt is in `PROMPTS.md`, and every step, problem and fix is in `build-log/BUILD-LOG.md`.
 
+The video is one uncut take of the Lens Studio preview, driven by a LEAF scenario. Breathing is sped up in it (1.5 s, then 1 s per phase instead of 4 s), so the whole climb fits under 3 minutes.
+
 ## What the preview proves and what it doesn't
 
 Logic proven in the preview: the ladder layout, picking 3 of 6 tiles, the breathing rounds, Done and Not yet, the goal cards, the return arrow, and saving and reopening progress.
@@ -82,4 +91,4 @@ Ladder Steps is a self-reflection exercise from the Ladder method. It is not the
 
 **Video:** [YouTube link]
 
-**Repository:** [GitHub link]
+**Repository:** https://github.com/liaizhan/ladder-steps-lens
